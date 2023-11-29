@@ -1,7 +1,8 @@
-import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocumentClient, PutCommand, PutCommandOutput } from '@aws-sdk/lib-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock'
 import { handler } from '../create-todo';
 import { eventJSON } from './events/valid-event';
+import { TodoStatus } from '../entities/todo.entity';
 
 const ddbMock = mockClient(DynamoDBDocumentClient)
 
@@ -14,24 +15,29 @@ describe('lambda create-todo', () => {
 
   it('lambda create-todo should return 200', async () => {
 
-    ddbMock.on(PutCommand).resolves({
-      "Attributes": {
-        PK: "asdf",
-        SK: "NAME#",
-        data: "buy milk"
-      },
+    const mockOutputItem: Partial<PutCommandOutput> = {
+      Attributes: {
+        id: 'FSDFWFASDFGERSDFS',
+        text: 'Buy booze!!!',
+        status: TodoStatus.IN_PROGRESS.toString()
+      }
+    }
+
+    ddbMock.on(PutCommand).resolves(mockOutputItem)
+
+    eventJSON.body = JSON.stringify({
+      text: 'Buy booze!!!'
     })
 
     const result = await handler(eventJSON)
     const body = JSON.parse(result.body)
 
-    console.log(body)
 
     expect(result.statusCode).toBe(200)
     expect(body).toMatchObject({
       message: {
-        SK: "NAME#",
-        data: "buy milk"
+        text: 'Buy booze!!!',
+        status: TodoStatus.IN_PROGRESS
       }
     })
 

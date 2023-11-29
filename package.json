@@ -8,6 +8,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
+    "test-dev": "jest application --onlyChanged --watch",
+    "test-app": "jest -o --watch",
     "cdk": "cdk"
   },
   "devDependencies": {
@@ -24,6 +26,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.460.0",
     "@aws-sdk/lib-dynamodb": "^3.460.0",
+    "@aws-sdk/util-dynamodb": "^3.460.0",
     "aws-cdk-lib": "2.110.1",
     "constructs": "^10.0.0",
     "source-map-support": "^0.5.21"
