@@ -1,7 +1,7 @@
-import { BadRequestErrorException } from "../../../libs/exceptions/exceptions";
-import { Err, Ok, Result } from "../../../libs/types/result";
+import { BadRequestErrorException } from "@app/libs/exceptions/exceptions";
 import { TodoModel } from "../entities/todo.entity";
 import { RepositoryPort } from "../repositories/repository.port";
+import { Err, Ok, Result } from "@app/libs/types/result";
 
 interface CreateTodoRepositoryPort extends RepositoryPort<TodoModel> { }
 

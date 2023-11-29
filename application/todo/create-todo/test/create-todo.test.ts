@@ -3,14 +3,12 @@ import { mockClient } from 'aws-sdk-client-mock'
 import { handler } from '../create-todo';
 import { eventJSON } from './events/valid-event';
 import { TodoStatus } from '../entities/todo.entity';
-import { BadRequestErrorException } from '../../../libs/exceptions/exceptions';
-import { BAD_REQUEST } from '../../../libs/exceptions/exception.codes';
+import { BAD_REQUEST } from '@app/libs/exceptions/exception.codes';
 
 const ddbMock = mockClient(DynamoDBDocumentClient)
 
 beforeEach(() => {
   ddbMock.reset()
-
 })
 
 describe('lambda create-todo', () => {
@@ -34,7 +32,6 @@ describe('lambda create-todo', () => {
     // Test
     const result = await handler(eventJSON)
     const body = JSON.parse(result.body)
-
 
     // Validate
     expect(result.statusCode).toBe(200)
