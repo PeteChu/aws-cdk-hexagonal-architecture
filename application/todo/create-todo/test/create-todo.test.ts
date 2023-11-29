@@ -1,6 +1,6 @@
 import { DynamoDBDocumentClient, PutCommand, PutCommandOutput } from '@aws-sdk/lib-dynamodb';
 import { mockClient } from 'aws-sdk-client-mock'
-import { handler } from '../create-todo';
+import { handler } from '../index';
 import { eventJSON } from './events/valid-event';
 import { TodoStatus } from '../entities/todo.entity';
 import { BAD_REQUEST } from '@app/libs/exceptions/exception.codes';
@@ -17,8 +17,21 @@ describe('lambda create-todo', () => {
     // Expect
     const mockOutputItem: Partial<PutCommandOutput> = {
       Attributes: {
-        text: 'Buy booze!!!',
-        status: TodoStatus.IN_PROGRESS.toString()
+        id: {
+          'S': 'a2171ac8-9ad0-4a04-b265-6d7656fa4c94'
+        },
+        text: {
+          'S': 'Buy booze!!!'
+        },
+        status: {
+          'S': TodoStatus.IN_PROGRESS.toString()
+        },
+        createdAt: {
+          'S': new Date().toISOString()
+        },
+        updatedAt: {
+          'S': new Date().toISOString()
+        }
       }
     }
 
@@ -37,7 +50,10 @@ describe('lambda create-todo', () => {
     expect(result.statusCode).toBe(200)
     expect(body).toMatchObject({
       message: {
-        ...mockOutputItem.Attributes
+        props: {
+          "text": "Buy booze!!!",
+          "status": TodoStatus.IN_PROGRESS.toString()
+        }
       }
     })
 

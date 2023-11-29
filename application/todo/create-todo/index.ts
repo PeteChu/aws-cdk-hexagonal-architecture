@@ -1,5 +1,5 @@
 import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
-import { TodoModel } from './entities/todo.entity';
+import { CreateTodoProps } from './entities/todo.entity';
 import { DynamoDBRepository } from './repositories/dynamodb.repository.port';
 import { CreateTodoService } from './services/create-todo.service';
 import { BadRequestErrorException, InternalServerErrorException } from '@app/libs/exceptions/exceptions';
@@ -11,7 +11,7 @@ export const handler = async (event: APIGatewayEvent, context?: Context): Promis
   const repo = new DynamoDBRepository(tableName)
   const service = new CreateTodoService(repo)
 
-  const payload = JSON.parse(event.body ?? '') as TodoModel
+  const payload = JSON.parse(event.body ?? '') as CreateTodoProps
 
   const response = await service.createTodo(payload)
 
