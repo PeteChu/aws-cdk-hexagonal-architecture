@@ -8,8 +8,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "test": "jest",
-    "test-dev": "jest application --onlyChanged --watch",
-    "test-app": "jest -o --watch",
+    "test-dev": "npm run test -- --watch",
     "cdk": "cdk"
   },
   "devDependencies": {
