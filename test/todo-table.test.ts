@@ -10,7 +10,6 @@ beforeAll(() => {
   stack = new cdk.Stack()
   ddbTable = new TodoDynamoDBTable(stack, 'MyDynamoDBTestTable', 'todo-table')
   template = Template.fromStack(stack)
-  console.log(JSON.stringify(template))
 })
 
 describe('dynamodb todo table', () => {
