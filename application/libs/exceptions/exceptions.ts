@@ -10,6 +10,7 @@ export class BadRequestErrorException extends ExceptionBase {
   }
 
   readonly code = BAD_REQUEST;
+  readonly statusCode = 400
 }
 
 export class InternalServerErrorException extends ExceptionBase {
@@ -20,4 +21,5 @@ export class InternalServerErrorException extends ExceptionBase {
   }
 
   readonly code = INTERNAL_SERVER_ERROR;
+  readonly statusCode = 500
 }

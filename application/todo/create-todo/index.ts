@@ -1,14 +1,14 @@
 import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
 import { CreateTodoProps } from './entities/todo.entity';
-import { DynamoDBRepository } from './repositories/dynamodb.repository.port';
 import { CreateTodoService } from './services/create-todo.service';
 import { BadRequestErrorException, InternalServerErrorException } from '@app/libs/exceptions/exceptions';
+import { TodoDDBRepository } from '../repositories/todo.ddb.repository';
 
 export const handler = async (event: APIGatewayEvent, context?: Context): Promise<APIGatewayProxyResult> => {
 
   const tableName = process.env.DYNAMODB_TABLE_NAME ?? ''
 
-  const repo = new DynamoDBRepository(tableName)
+  const repo = new TodoDDBRepository(tableName)
   const service = new CreateTodoService(repo)
 
   const payload = JSON.parse(event.body ?? '') as CreateTodoProps
@@ -40,7 +40,7 @@ export const handler = async (event: APIGatewayEvent, context?: Context): Promis
   return {
     statusCode: 200,
     body: JSON.stringify({
-      message: response.value
+      message: response.value.getProps()
     }),
   }
 };

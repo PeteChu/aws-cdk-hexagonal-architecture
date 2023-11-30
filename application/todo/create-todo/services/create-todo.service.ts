@@ -1,9 +1,7 @@
 import { BadRequestErrorException } from "@app/libs/exceptions/exceptions";
 import { CreateTodoProps, TodoEntity } from "../entities/todo.entity";
-import { RepositoryPort } from "../repositories/repository.port";
 import { Err, Ok, Result } from "@app/libs/types/result";
-
-interface CreateTodoRepositoryPort extends RepositoryPort<TodoEntity> { }
+import { TodoRepositoryPort } from "@app/todo/repositories/todo.repository.port";
 
 interface ICreateTodo {
   createTodo(item: CreateTodoProps): Promise<Result<TodoEntity, Error>>
@@ -11,7 +9,7 @@ interface ICreateTodo {
 
 export class CreateTodoService implements ICreateTodo {
 
-  constructor(private readonly repository: CreateTodoRepositoryPort) { }
+  constructor(private readonly repository: TodoRepositoryPort) { }
 
   async createTodo(item: CreateTodoProps): Promise<Result<TodoEntity, Error>> {
     if (!item.text) {
@@ -20,9 +18,13 @@ export class CreateTodoService implements ICreateTodo {
     }
 
     const todo = TodoEntity.create(item)
+
     const response = await this.repository.create(todo)
-    console.log(response.getProps())
-    return Ok(response)
+    if (!response.ok) {
+      // Handle error
+      return response
+    }
+    return Ok(todo)
   }
 
 }

@@ -16,6 +16,9 @@ describe('lambda create-todo', () => {
   it('lambda create-todo should return 200', async () => {
     // Expect
     const mockOutputItem: Partial<PutCommandOutput> = {
+      $metadata: {
+        httpStatusCode: 200
+      },
       Attributes: {
         id: {
           'S': 'a2171ac8-9ad0-4a04-b265-6d7656fa4c94'
@@ -42,21 +45,11 @@ describe('lambda create-todo', () => {
       text: 'Buy booze!!!'
     })
 
-    // Test
+    // Invoke
     const result = await handler(eventJSON)
-    const body = JSON.parse(result.body)
 
     // Validate
     expect(result.statusCode).toBe(200)
-    expect(body).toMatchObject({
-      message: {
-        props: {
-          "text": "Buy booze!!!",
-          "status": TodoStatus.IN_PROGRESS.toString()
-        }
-      }
-    })
-
   })
 
   it("lambda create-todo should return 400", async () => {

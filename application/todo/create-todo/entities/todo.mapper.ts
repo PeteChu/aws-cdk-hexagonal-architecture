@@ -1,17 +1,16 @@
 import { Mapper } from "@app/libs/ddd/mapper.interface";
-import { TodoEntity, TodoStatus } from "./entities/todo.entity";
-import { TodoModel, todoSchema } from "./repositories/todo.repository";
-import { TodoResponseDto } from "./dtos/todo.response.dto";
+import { TodoEntity, TodoStatus } from "./todo.entity";
+import { TodoResponseDto } from "../dtos/todo.response.dto";
+import { TodoModel, todoSchema } from "../../repositories/todo.ddb.repository";
 
 export class TodoMapper implements Mapper<TodoEntity, TodoModel, TodoResponseDto>  {
 
-  toPersistence(entity: TodoEntity): { id: string; text: string; status: string; createdAt: Date; updatedAt: Date; } {
+  toPersistence(entity: TodoEntity): TodoModel {
     const copy = entity.getProps()
     const record: TodoModel = {
       ...copy
     }
     return todoSchema.parse(record)
-
   }
 
   toDomain(record: TodoModel): TodoEntity {
