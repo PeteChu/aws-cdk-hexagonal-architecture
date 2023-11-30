@@ -1,24 +1,30 @@
-import { TodoModel } from "../entities/todo.entity";
-import { RepositoryPort } from "../repositories/repository.port";
-
-interface CreateTodoRepositoryPort extends RepositoryPort<TodoModel> { }
+import { BadRequestErrorException } from "@app/libs/exceptions/exceptions";
+import { CreateTodoProps, TodoEntity } from "../entities/todo.entity";
+import { Err, Ok, Result } from "@app/libs/types/result";
+import { TodoRepositoryPort } from "@app/todo/repositories/todo.repository.port";
 
 interface ICreateTodo {
-  createTodo(item: TodoModel): Promise<TodoModel>
+  createTodo(item: CreateTodoProps): Promise<Result<TodoEntity, Error>>
 }
 
 export class CreateTodoService implements ICreateTodo {
 
-  constructor(private readonly repository: CreateTodoRepositoryPort) { }
+  constructor(private readonly repository: TodoRepositoryPort) { }
 
-  async createTodo(item: TodoModel): Promise<TodoModel> {
-
+  async createTodo(item: CreateTodoProps): Promise<Result<TodoEntity, Error>> {
     if (!item.text) {
-      throw Error('"text" is required')
+      const exception = new BadRequestErrorException("property 'text' is required.")
+      return Err(exception)
     }
 
-    return await this.repository.create(item)
-  }
+    const todo = TodoEntity.create(item)
 
+    const response = await this.repository.create(todo)
+    if (!response.ok) {
+      // Handle error
+      return response
+    }
+    return Ok(todo)
+  }
 
 }

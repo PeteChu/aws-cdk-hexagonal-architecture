@@ -15,7 +15,7 @@ export class TodoCreateLambda extends Construct {
 
     this._resource = new NodejsFunction(this, 'todo-create-lambda', {
       functionName: "todo-create",
-      entry: 'application/todo/create-todo/create-todo.ts',
+      entry: 'application/todo/create-todo/index.ts',
       runtime: Runtime.NODEJS_18_X
     });
   }
