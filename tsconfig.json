@@ -23,6 +23,20 @@
     "typeRoots": [
       "./node_modules/@types"
     ],
+    "baseUrl": "./",
+    "paths": {
+      "@app/*": [
+        "application/*"
+      ],
+      "@infra/*": [
+        "infrastructure/*"
+      ]
+    }
+  },
+  "ts-node": {
+    "require": [
+      "tsconfig-paths/register"
+    ]
   },
   "exclude": [
     "node_modules",
