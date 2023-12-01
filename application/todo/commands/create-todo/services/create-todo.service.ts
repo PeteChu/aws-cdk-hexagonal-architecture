@@ -4,12 +4,16 @@ import { Err, Ok, Result } from "@app/libs/types/result";
 import { TodoRepositoryPort } from "@app/todo/repositories/todo.repository.port";
 import { CreateTodoProps } from "@app/todo/domain/todo.types";
 import { TodoMapper } from "@app/todo/domain/todo.mapper";
+import { container } from "tsyringe";
 
 interface ICreateTodo {
   createTodo(item: CreateTodoProps): Promise<Result<TodoEntity, Error>>
 }
 
 export class CreateTodoService implements ICreateTodo {
+
+  private mapper: TodoMapper = container.resolve(TodoMapper)
+
 
   constructor(private readonly repository: TodoRepositoryPort) { }
 
@@ -21,9 +25,8 @@ export class CreateTodoService implements ICreateTodo {
 
     const todo = TodoEntity.create(item)
 
-    const mappedItem = new TodoMapper().toPersistence(todo)
 
-    const response = await this.repository.create(mappedItem)
+    const response = await this.repository.create(this.mapper.toPersistence(todo))
     if (!response.ok) {
       // Handle error
       return response

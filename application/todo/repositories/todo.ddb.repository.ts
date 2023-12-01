@@ -5,9 +5,12 @@ import { PutCommand, PutCommandInput, UpdateCommand, UpdateCommandInput } from "
 import { marshall } from "@aws-sdk/util-dynamodb";
 import { TodoModel } from "../domain/todo.model";
 import { TodoRepositoryPort } from "./todo.repository.port";
-
+import { TodoMapper } from "../domain/todo.mapper";
+import { container } from "tsyringe";
 
 export class TodoDDBRepository extends DynamoDBRepository<TodoModel> implements TodoRepositoryPort {
+
+  private mapper: TodoMapper = container.resolve(TodoMapper)
 
   constructor(tableName: string) {
     super(tableName)
@@ -18,6 +21,7 @@ export class TodoDDBRepository extends DynamoDBRepository<TodoModel> implements 
       TableName: this.tableName,
       Item: marshall(payload)
     }
+
     try {
       await this.ds.send(new PutCommand(input))
     } catch (e: unknown) {

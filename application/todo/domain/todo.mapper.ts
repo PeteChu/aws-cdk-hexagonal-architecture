@@ -1,8 +1,10 @@
 import { Mapper } from "@app/libs/ddd/mapper.interface";
-import { TodoEntity, TodoStatus } from "./todo.entity";
+import { singleton } from "tsyringe";
 import { TodoResponseDto } from "../dtos/todo.response.dto";
+import { TodoEntity, TodoStatus } from "./todo.entity";
 import { TodoModel, todoSchema } from "./todo.model";
 
+@singleton()
 export class TodoMapper implements Mapper<TodoEntity, TodoModel, TodoResponseDto>  {
 
   toPersistence(entity: TodoEntity): TodoModel {
