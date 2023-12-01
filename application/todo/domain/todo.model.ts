@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from "zod"
 
 export const todoSchema = z.object({
@@ -6,8 +7,6 @@ export const todoSchema = z.object({
   status: z.string(),
   createdAt: z.preprocess((val: any) => new Date(val).toISOString(), z.string().datetime()),
   updatedAt: z.preprocess((val: any) => new Date(val).toISOString(), z.string().datetime())
-  // createdAt: z.coerce.date(),
-  // updatedAt: z.coerce.date()
 })
 
 export type TodoModel = z.TypeOf<typeof todoSchema>

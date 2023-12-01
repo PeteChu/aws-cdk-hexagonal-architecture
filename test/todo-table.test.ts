@@ -4,11 +4,11 @@ import { TodoDynamoDBTable } from '../infrastructure/todo-dynamodb-table'
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb'
 
 
-let stack: cdk.Stack, ddbTable: TodoDynamoDBTable, template: Template
+let stack: cdk.Stack, template: Template
 
 beforeAll(() => {
   stack = new cdk.Stack()
-  ddbTable = new TodoDynamoDBTable(stack, 'MyDynamoDBTestTable', 'todo-table')
+  new TodoDynamoDBTable(stack, 'MyDynamoDBTestTable', 'todo-table')
   template = Template.fromStack(stack)
 })
 
