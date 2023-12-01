@@ -1,9 +1,10 @@
-import { TodoRepositoryPort } from "./todo.repository.port";
-import { PutCommand, PutCommandInput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBRepository } from "@app/libs/db/dynamodb.repository";
+import { InternalServerErrorException } from "@app/libs/exceptions/exceptions";
 import { Err, Ok, Result } from "@app/libs/types/result";
+import { PutCommand, PutCommandInput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { marshall } from "@aws-sdk/util-dynamodb";
 import { TodoModel } from "../domain/todo.model";
+import { TodoRepositoryPort } from "./todo.repository.port";
 
 
 export class TodoDDBRepository extends DynamoDBRepository<TodoModel> implements TodoRepositoryPort {
@@ -18,14 +19,12 @@ export class TodoDDBRepository extends DynamoDBRepository<TodoModel> implements 
       Item: marshall(payload)
     }
     try {
-      const commandOutput = await this.ds.send(new PutCommand(input))
-      return Ok(
-        commandOutput.$metadata.httpStatusCode === 200
-      )
-    } catch (e) {
+      await this.ds.send(new PutCommand(input))
+    } catch (e: unknown) {
       console.log(e)
-      return Err(e as Error)
+      return Err(new InternalServerErrorException())
     }
+    return Ok(true)
   }
 
   async update(id: string, payload: TodoModel): Promise<boolean> {
@@ -38,10 +37,8 @@ export class TodoDDBRepository extends DynamoDBRepository<TodoModel> implements 
       ExpressionAttributeValues: {
         ":text": payload.text
       },
-      // ConditionExpression: "attribute_not_exists('deleted')"
     }
     const commandOutput = await this.ds.send(new UpdateCommand(input))
     return commandOutput.$metadata.httpStatusCode === 200
   }
-
 }
