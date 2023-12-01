@@ -1,15 +1,19 @@
-export class ApiErrorResponse {
+import { APIGatewayProxyResult } from "aws-lambda";
+import { ExceptionBase } from "../exceptions/exception.base";
+
+export class ApiErrorResponse implements APIGatewayProxyResult {
 
   readonly statusCode: number;
+  readonly body: string;
+  readonly code: string
 
-  readonly message: string;
-
-  readonly error: string;
-
-  constructor(body: ApiErrorResponse) {
+  constructor(body: ExceptionBase) {
     this.statusCode = body.statusCode
-    this.message = body.message
-    this.error = body.error
+    this.body = JSON.stringify({
+      error: {
+        code: body.code,
+        message: body.message,
+      }
+    })
   }
-
 }

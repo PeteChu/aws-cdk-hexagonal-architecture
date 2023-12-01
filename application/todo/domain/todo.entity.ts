@@ -1,5 +1,6 @@
 import { Entity } from '@app/libs/ddd/entity.base';
 import * as crypto from 'crypto'
+import { CreateTodoProps } from './todo.types';
 
 export enum TodoStatus {
   IN_PROGRESS = 'In-Progress',
@@ -14,9 +15,6 @@ export interface TodoProps {
   updatedAt?: string
 }
 
-export interface CreateTodoProps {
-  text: string
-}
 
 export class TodoEntity extends Entity<TodoProps> {
   protected _id: string;
@@ -26,5 +24,9 @@ export class TodoEntity extends Entity<TodoProps> {
     const props: TodoProps = { ...create, status: TodoStatus.IN_PROGRESS }
     const todo = new TodoEntity({ id, props })
     return todo
+  }
+
+
+  validate(): void {
   }
 }

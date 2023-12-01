@@ -1,7 +1,7 @@
 import { Mapper } from "@app/libs/ddd/mapper.interface";
 import { TodoEntity, TodoStatus } from "./todo.entity";
 import { TodoResponseDto } from "../dtos/todo.response.dto";
-import { TodoModel, todoSchema } from "../../repositories/todo.ddb.repository";
+import { TodoModel, todoSchema } from "./todo.model";
 
 export class TodoMapper implements Mapper<TodoEntity, TodoModel, TodoResponseDto>  {
 

@@ -2,7 +2,7 @@ import { DynamoDBDocumentClient, PutCommand, PutCommandOutput } from '@aws-sdk/l
 import { mockClient } from 'aws-sdk-client-mock'
 import { handler } from '../index';
 import { eventJSON } from './events/valid-event';
-import { TodoStatus } from '../entities/todo.entity';
+import { TodoStatus } from '../../../domain/todo.entity';
 import { BAD_REQUEST } from '@app/libs/exceptions/exception.codes';
 
 const ddbMock = mockClient(DynamoDBDocumentClient)

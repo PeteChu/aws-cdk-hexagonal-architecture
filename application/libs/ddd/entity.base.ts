@@ -21,6 +21,7 @@ export abstract class Entity<EntityProps> {
     this._createdAt = createdAt || now;
     this._updatedAt = updatedAt || now;
     this.props = props
+    this.validate()
   }
   protected readonly props: EntityProps;
 
@@ -55,4 +56,6 @@ export abstract class Entity<EntityProps> {
     }
     return Object.freeze(propsCopy)
   }
+
+  abstract validate(): void
 }

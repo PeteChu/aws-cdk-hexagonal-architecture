@@ -1,4 +1,4 @@
 import { RepositoryPort } from "@app/libs/db/repository.port";
-import { TodoEntity } from "../create-todo/entities/todo.entity";
+import { TodoModel } from "../domain/todo.model";
 
-export interface TodoRepositoryPort extends RepositoryPort<TodoEntity> { }
+export interface TodoRepositoryPort extends RepositoryPort<TodoModel> { }
