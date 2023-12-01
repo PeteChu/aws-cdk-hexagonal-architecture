@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
 import { CreateTodoService } from './services/create-todo.service';
 import { TodoDDBRepository } from '../../repositories/todo.ddb.repository';
