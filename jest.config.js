@@ -8,7 +8,7 @@ module.exports = {
   transform: {
     '^.+\\.tsx?$': 'ts-jest'
   },
-  testpathIgnorePatterns: ['/node_modules/'],
+  testPathIgnorePatterns: ['/node_modules/'],
   modulePaths: [compilerOptions.baseUrl],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths),
 };
