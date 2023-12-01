@@ -1,4 +1,4 @@
-import { BadRequestErrorException } from "@app/libs/exceptions/exceptions";
+import { BadRequestException } from "@app/libs/exceptions/exceptions";
 import { TodoEntity } from "../../../domain/todo.entity";
 import { Err, Ok, Result } from "@app/libs/types/result";
 import { TodoRepositoryPort } from "@app/todo/repositories/todo.repository.port";
@@ -15,7 +15,7 @@ export class CreateTodoService implements ICreateTodo {
 
   async createTodo(item: CreateTodoProps): Promise<Result<TodoEntity, Error>> {
     if (!item.text) {
-      const exception = new BadRequestErrorException("property 'text' is required.")
+      const exception = new BadRequestException("property 'text' is required.")
       return Err(exception)
     }
 
