@@ -1,7 +1,7 @@
 import { DynamoDBRepository } from "@app/libs/db/dynamodb.repository";
 import { InternalServerErrorException } from "@app/libs/exceptions/exceptions";
 import { Err, Ok, Result } from "@app/libs/types/result";
-import { GetItemCommand, GetItemCommandInput } from "@aws-sdk/client-dynamodb";
+import { GetItemCommand, GetItemCommandInput, ScanCommand, ScanCommandInput } from "@aws-sdk/client-dynamodb";
 import { PutCommand, PutCommandInput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { TodoModel, todoSchema } from "../domain/todo.model";
@@ -32,7 +32,7 @@ export class TodoDDBRepository extends DynamoDBRepository<TodoModel> implements 
     const input: UpdateCommandInput = {
       TableName: this.tableName,
       Key: {
-        "id": id
+        "Id": id
       },
       UpdateExpression: "set Text = :text",
       ExpressionAttributeValues: {
@@ -44,11 +44,10 @@ export class TodoDDBRepository extends DynamoDBRepository<TodoModel> implements 
   }
 
   async findOne(id: string): Promise<Result<TodoModel, Error>> {
-
     const input: GetItemCommandInput = {
       TableName: this.tableName,
       Key: {
-        "ID": {
+        "Id": {
           "S": id
         }
       }
@@ -66,5 +65,20 @@ export class TodoDDBRepository extends DynamoDBRepository<TodoModel> implements 
       console.log(e)
       return Err(new InternalServerErrorException())
     }
+  }
+
+  async find(payload?: TodoModel): Promise<Result<TodoModel[], Error>> {
+
+    if (!payload) {
+      const input: ScanCommandInput = {
+        TableName: this.tableName,
+        Limit: 10
+      }
+      const items = await this.ds.send(new ScanCommand(input))
+      return Ok((items.Items ?? []).map(x => todoSchema.parse(unmarshall(x))))
+    }
+
+    // TODO: implement find todos from payload
+    throw new Error("Method not implemented.");
   }
 }

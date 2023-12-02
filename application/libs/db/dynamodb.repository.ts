@@ -12,7 +12,7 @@ export abstract class DynamoDBRepository<Aggregate> implements RepositoryPort<Ag
     this.ds = DynamoDBDocumentClient.from(dynamoDB)
   }
 
-  find(item: Aggregate): Promise<Aggregate[]> {
+  find(item?: Aggregate): Promise<Result<Aggregate[], Error>> {
     throw new Error("Method not implemented.");
   }
 
