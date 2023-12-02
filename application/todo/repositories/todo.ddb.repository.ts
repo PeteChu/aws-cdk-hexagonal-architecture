@@ -1,16 +1,13 @@
 import { DynamoDBRepository } from "@app/libs/db/dynamodb.repository";
 import { InternalServerErrorException } from "@app/libs/exceptions/exceptions";
 import { Err, Ok, Result } from "@app/libs/types/result";
+import { GetItemCommand, GetItemCommandInput } from "@aws-sdk/client-dynamodb";
 import { PutCommand, PutCommandInput, UpdateCommand, UpdateCommandInput } from "@aws-sdk/lib-dynamodb";
-import { marshall } from "@aws-sdk/util-dynamodb";
-import { TodoModel } from "../domain/todo.model";
+import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
+import { TodoModel, todoSchema } from "../domain/todo.model";
 import { TodoRepositoryPort } from "./todo.repository.port";
-import { TodoMapper } from "../domain/todo.mapper";
-import { container } from "tsyringe";
 
 export class TodoDDBRepository extends DynamoDBRepository<TodoModel> implements TodoRepositoryPort {
-
-  private mapper: TodoMapper = container.resolve(TodoMapper)
 
   constructor(tableName: string) {
     super(tableName)
@@ -44,5 +41,30 @@ export class TodoDDBRepository extends DynamoDBRepository<TodoModel> implements 
     }
     const commandOutput = await this.ds.send(new UpdateCommand(input))
     return commandOutput.$metadata.httpStatusCode === 200
+  }
+
+  async findOne(id: string): Promise<Result<TodoModel, Error>> {
+
+    const input: GetItemCommandInput = {
+      TableName: this.tableName,
+      Key: {
+        "ID": {
+          "S": id
+        }
+      }
+    }
+    const commandOutput = await this.ds.send(new GetItemCommand(input))
+
+    if (commandOutput.$metadata.httpStatusCode !== 200) {
+      return Err(new InternalServerErrorException())
+    }
+
+    try {
+      const item = unmarshall(commandOutput.Item ?? {})
+      return Ok(todoSchema.parse(item))
+    } catch (e) {
+      console.log(e)
+      return Err(new InternalServerErrorException())
+    }
   }
 }

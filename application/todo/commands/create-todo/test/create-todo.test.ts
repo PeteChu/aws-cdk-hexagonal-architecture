@@ -3,7 +3,6 @@ import { mockClient } from 'aws-sdk-client-mock'
 import { handler } from '../index';
 import { eventJSON } from './events/valid-event';
 import { TodoStatus } from '../../../domain/todo.entity';
-import { BAD_REQUEST } from '@app/libs/exceptions/exception.codes';
 
 const ddbMock = mockClient(DynamoDBDocumentClient)
 
@@ -20,19 +19,19 @@ describe('lambda create-todo', () => {
         httpStatusCode: 200
       },
       Attributes: {
-        id: {
+        Id: {
           'S': 'a2171ac8-9ad0-4a04-b265-6d7656fa4c94'
         },
-        text: {
+        Text: {
           'S': 'Buy booze!!!'
         },
-        status: {
+        Status: {
           'S': TodoStatus.IN_PROGRESS.toString()
         },
-        createdAt: {
+        CreatedAt: {
           'S': new Date().toISOString()
         },
-        updatedAt: {
+        UpdatedAt: {
           'S': new Date().toISOString()
         }
       }

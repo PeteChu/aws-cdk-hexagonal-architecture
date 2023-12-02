@@ -16,7 +16,7 @@ export abstract class DynamoDBRepository<Aggregate> implements RepositoryPort<Ag
     throw new Error("Method not implemented.");
   }
 
-  findOne(id: string): Promise<Aggregate> {
+  findOne(id: string): Promise<Result<Aggregate, Error>> {
     throw new Error("Method not implemented.");
   }
 
