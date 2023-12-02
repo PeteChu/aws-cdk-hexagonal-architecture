@@ -54,25 +54,30 @@ describe('lambda create-todo', () => {
 
   it("lambda create-todo should return 400", async () => {
 
-    // Expect
-    const mockOutputItem = {
-      error: {
-        code: BAD_REQUEST,
-        message: "property 'text' is required."
-      }
-    }
+    // Input
+    eventJSON.body = JSON.stringify({
+      message: 'Buy booze!!!',
+    })
+
+    const response = await handler(eventJSON);
+    expect(response.statusCode).toBe(400)
+  })
+
+
+  it("shoud return 400 with message: 'property 'text' is required'", async () => {
 
     // Input
     eventJSON.body = JSON.stringify({
-      message: 'Buy booze!!!'
+      message: 'Buy booze!!!',
     })
 
     const response = await handler(eventJSON);
     const body = JSON.parse(response.body)
-
     expect(response.statusCode).toBe(400)
     expect(body).toMatchObject({
-      ...mockOutputItem
+      error: {
+        message: "Input validation failed: property 'text' is required.",
+      }
     })
   })
 
