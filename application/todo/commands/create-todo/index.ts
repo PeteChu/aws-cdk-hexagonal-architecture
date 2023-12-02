@@ -5,6 +5,9 @@ import { TodoDDBRepository } from '../../repositories/todo.ddb.repository';
 import { ApiErrorResponse } from '@app/libs/api/api-error.response';
 import { ExceptionBase } from '@app/libs/exceptions/exception.base';
 import { CreateTodoProps } from '@app/todo/domain/todo.types';
+import * as dotenv from 'dotenv'
+
+dotenv.config();
 
 export const handler = async (event: APIGatewayEvent, context?: Context): Promise<APIGatewayProxyResult> => {
 
