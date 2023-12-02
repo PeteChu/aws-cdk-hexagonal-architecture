@@ -21,12 +21,12 @@ export class TodoAppStack extends cdk.Stack {
     })
 
     const items = apigw.root.addResource("todo")
-    items.addMethod("GET", createIntegration)
+    // items.addMethod("GET", createIntegration)
     items.addMethod("POST", createIntegration)
-
-    const singleItem = items.addResource('{id}')
-    singleItem.addMethod("PUT", createIntegration)
-    singleItem.addMethod("DELETE", createIntegration)
+    //
+    // const singleItem = items.addResource('{id}')
+    // singleItem.addMethod("PUT", createIntegration)
+    // singleItem.addMethod("DELETE", createIntegration)
 
   }
 }
