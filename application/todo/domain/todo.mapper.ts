@@ -5,14 +5,15 @@ import { TodoEntity, TodoStatus } from "./todo.entity";
 import { TodoModel, todoSchema } from "./todo.model";
 
 @singleton()
-export class TodoMapper implements Mapper<TodoEntity, TodoModel, TodoResponseDto>  {
-
+export class TodoMapper
+  implements Mapper<TodoEntity, TodoModel, TodoResponseDto>
+{
   toPersistence(entity: TodoEntity): TodoModel {
-    const copy = entity.getProps()
+    const copy = entity.getProps();
     const record: TodoModel = {
-      ...copy
-    }
-    return todoSchema.parse(record)
+      ...copy,
+    };
+    return todoSchema.parse(record);
   }
 
   toDomain(record: TodoModel): TodoEntity {
@@ -22,18 +23,17 @@ export class TodoMapper implements Mapper<TodoEntity, TodoModel, TodoResponseDto
       updatedAt: new Date(record.updatedAt),
       props: {
         text: record.text,
-        status: record.status as TodoStatus
-      }
-    })
-    return entity
+        status: record.status as TodoStatus,
+      },
+    });
+    return entity;
   }
 
   toResponse(entity: TodoEntity): TodoResponseDto {
-    const props = entity.getProps()
-    const response = new TodoResponseDto(entity)
-    response.text = props.text
-    response.status = props.status
-    return response
+    const props = entity.getProps();
+    const response = new TodoResponseDto(entity);
+    response.text = props.text;
+    response.status = props.status;
+    return response;
   }
-
 }
