@@ -13,4 +13,4 @@ export const todoSchema = z.record(z.any())
 
   }))
 
-export type TodoModel = z.TypeOf<typeof todoSchema>
+export type TodoModel = z.TypeOf<typeof todoSchema>;

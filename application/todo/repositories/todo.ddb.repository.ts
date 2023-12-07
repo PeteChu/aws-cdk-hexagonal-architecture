@@ -10,22 +10,22 @@ import { TodoRepositoryPort } from "./todo.repository.port";
 export class TodoDDBRepository extends DynamoDBRepository<TodoModel> implements TodoRepositoryPort {
 
   constructor(tableName: string) {
-    super(tableName)
+    super(tableName);
   }
 
   async create(payload: TodoModel): Promise<Result<boolean, Error>> {
     const input: PutCommandInput = {
       TableName: this.tableName,
-      Item: marshall(payload)
-    }
+      Item: payload,
+    };
 
     try {
-      await this.ds.send(new PutCommand(input))
+      await this.ds.send(new PutCommand(input));
     } catch (e: unknown) {
-      console.log(e)
-      return Err(new InternalServerErrorException())
+      console.log(e);
+      return Err(new InternalServerErrorException());
     }
-    return Ok(true)
+    return Ok(true);
   }
 
   async update(id: string, payload: TodoModel): Promise<boolean> {
@@ -36,11 +36,11 @@ export class TodoDDBRepository extends DynamoDBRepository<TodoModel> implements 
       },
       UpdateExpression: "set Text = :text",
       ExpressionAttributeValues: {
-        ":text": payload.text
+        ":text": payload.text,
       },
-    }
-    const commandOutput = await this.ds.send(new UpdateCommand(input))
-    return commandOutput.$metadata.httpStatusCode === 200
+    };
+    const commandOutput = await this.ds.send(new UpdateCommand(input));
+    return commandOutput.$metadata.httpStatusCode === 200;
   }
 
   async findOne(id: string): Promise<Result<TodoModel, Error>> {
