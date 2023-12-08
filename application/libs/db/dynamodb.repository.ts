@@ -1,15 +1,16 @@
-import { DynamoDB } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { RepositoryPort } from "./repository.port";
 import { Result } from "../types/result";
+import { RepositoryPort } from "./repository.port";
 
-export abstract class DynamoDBRepository<Aggregate> implements RepositoryPort<Aggregate> {
-
-  protected readonly ds: DynamoDBDocumentClient
+export abstract class DynamoDBRepository<Aggregate>
+  implements RepositoryPort<Aggregate>
+{
+  protected readonly ds: DynamoDBDocumentClient;
 
   constructor(protected readonly tableName: string) {
-    const dynamoDB = new DynamoDB()
-    this.ds = DynamoDBDocumentClient.from(dynamoDB)
+    const dynamoDB = new DynamoDBClient();
+    this.ds = DynamoDBDocumentClient.from(dynamoDB);
   }
 
   find(item?: Aggregate): Promise<Result<Aggregate[], Error>> {
@@ -31,5 +32,4 @@ export abstract class DynamoDBRepository<Aggregate> implements RepositoryPort<Ag
   delete(id: string): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
-
 }

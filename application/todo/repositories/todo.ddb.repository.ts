@@ -1,12 +1,18 @@
 import { DynamoDBRepository } from "@app/libs/db/dynamodb.repository";
-import { InternalServerErrorException } from "@app/libs/exceptions/exceptions";
-import { Err, Ok, Result } from "@app/libs/types/result";
-import { ScanCommand, ScanCommandInput } from "@aws-sdk/client-dynamodb";
 import {
-  GetCommand,
-  GetCommandInput,
+  InternalServerErrorException,
+  NotFoundException,
+} from "@app/libs/exceptions/exceptions";
+import { Err, Ok, Result } from "@app/libs/types/result";
+import {
+  QueryCommand,
+  ScanCommand,
+  ScanCommandInput,
+} from "@aws-sdk/client-dynamodb";
+import {
   PutCommand,
   PutCommandInput,
+  QueryCommandInput,
   UpdateCommand,
   UpdateCommandInput,
 } from "@aws-sdk/lib-dynamodb";
@@ -53,21 +59,28 @@ export class TodoDDBRepository
   }
 
   async findOne(id: string): Promise<Result<TodoModel, Error>> {
-    const input: GetCommandInput = {
+    const input: QueryCommandInput = {
       TableName: this.tableName,
-      Key: {
-        id: id,
+      KeyConditionExpression: "id = :id",
+      ExpressionAttributeValues: {
+        ":id": { S: id },
       },
+      ConsistentRead: false,
     };
-    const commandOutput = await this.ds.send(new GetCommand(input));
+    const commandOutput = await this.ds.send(new QueryCommand(input));
 
     if (commandOutput.$metadata.httpStatusCode !== 200) {
       return Err(new InternalServerErrorException());
     }
 
     try {
-      const item = commandOutput.Item ?? {};
-      return Ok(todoSchema.parse(item));
+      const [item] = commandOutput.Items ?? [];
+
+      if (!item) {
+        return Err(new NotFoundException(`Todo with id "${id}" not found.`));
+      }
+
+      return Ok(todoSchema.parse(unmarshall(item)));
     } catch (e) {
       console.log(e);
       return Err(new InternalServerErrorException());

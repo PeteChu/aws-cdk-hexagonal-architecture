@@ -1,13 +1,17 @@
 import { TodoStatus } from "@app/todo/domain/todo.entity";
-import { ScanCommand, ScanCommandOutput } from "@aws-sdk/client-dynamodb";
+import {
+  QueryCommand,
+  ScanCommand,
+  ScanCommandOutput,
+} from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
-  GetCommand,
-  GetCommandOutput,
+  QueryCommandOutput,
 } from "@aws-sdk/lib-dynamodb";
 import { mockClient } from "aws-sdk-client-mock";
 import { handler } from "../index";
 import { eventJSON } from "./events/valid-event";
+import { marshall } from "@aws-sdk/util-dynamodb";
 
 const ddbMock = mockClient(DynamoDBDocumentClient);
 
@@ -17,20 +21,22 @@ beforeEach(() => {
 
 describe("lambda get todos", () => {
   it('should return todo with todo "Buy milk!!!"', async () => {
-    const mockOutputItem: GetCommandOutput = {
+    const mockOutputItem: QueryCommandOutput = {
       $metadata: {
         httpStatusCode: 200,
       },
-      Item: {
-        id: "2a4f8883-675b-4c03-8fca-ae8cf5ee2ce5",
-        text: "Buy milk!!!",
-        status: TodoStatus.IN_PROGRESS,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      },
+      Items: [
+        marshall({
+          id: "2a4f8883-675b-4c03-8fca-ae8cf5ee2ce5",
+          text: "Buy milk!!!",
+          status: TodoStatus.IN_PROGRESS,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }),
+      ],
     };
 
-    ddbMock.on(GetCommand).resolves(mockOutputItem);
+    ddbMock.on(QueryCommand).resolves(mockOutputItem);
 
     eventJSON.body = JSON.stringify({
       id: "2a4f8883-675b-4c03-8fca-ae8cf5ee2ce5",

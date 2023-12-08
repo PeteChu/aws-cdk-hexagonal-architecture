@@ -3,6 +3,7 @@ import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import { Construct } from "constructs";
 import { TodoCreateLambda } from "./todo-create-lambda";
 import { TodoDynamoDBTable } from "./todo-dynamodb-table";
+import { TodoGetLambda } from "./todo-get-lambda";
 
 export class TodoAppStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -19,19 +20,26 @@ export class TodoAppStack extends cdk.Stack {
       todoCreateLambda.resource,
     );
 
+    const todoGetLambda = new TodoGetLambda(this, "todo-get");
+    const getIntegration = new apigateway.LambdaIntegration(
+      todoGetLambda.resource,
+    );
+
     table.grantReadWriteData(todoCreateLambda.resource);
+    table.grantReadWriteData(todoGetLambda.resource);
 
     const apigw = new apigateway.RestApi(this, "todo-apigw", {
       restApiName: "Todo service",
       deployOptions: {
         stageName: "dev",
       },
+      endpointTypes: [apigateway.EndpointType.REGIONAL],
     });
 
     const items = apigw.root.addResource("todo");
-    // items.addMethod("GET", createIntegration)
+    items.addMethod("GET", getIntegration);
     items.addMethod("POST", createIntegration);
-    //
+
     // const singleItem = items.addResource('{id}')
     // singleItem.addMethod("PUT", createIntegration)
     // singleItem.addMethod("DELETE", createIntegration)
